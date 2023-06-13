@@ -1,16 +1,18 @@
 #!/bin/bash
 
-n=$(pbsnodes -x | sed 's/<Node>/\n/g' | grep -o '<name>.*</name>' | wc -l)
+n=$(pbsnodes -a | awk '/^s/{count++} END{print count}')
 echo "Number of nodes: $n"
 
-g_b_m=$(pbsnodes -x | sed 's/<Node>/\n/g' | grep -o '<status>.*</status>' | grep -o 'totmem=.*' | cut -d',' -f1 | sort -u | wc -l)
-echo "$g_b_m groups by memory"
+echo "Nodes with the same number of cores:"
+pbsnodes -a | awk '/np =/{print $3}' | sort | uniq -c | awk '{printf "%d nodes with %d cores\n", $1, $2}'
 
-g_b_p=$(pbsnodes -x | sed 's/<Node>/\n/g' | grep -o '<np>.*</np>' | sort -u | wc -l)
-echo "$g_b_p groups by processor number"
+echo "Nodes with the same amount of memory:"
+pbsnodes -a | awk '/physmem =/{print $10}' | sort | uniq -c | awk '{printf "%d nodes with %d GB of memory\n", $1, $2/$3}'
 
 n_p=$(pbsnodes -x | sed 's/<Node>/\n/g' | grep -o '<np>.*</np>' | cut -d'>' -f2 | cut -d'<' -f1 | tr '\n' ' ' | awk '{sum += $1} END {print sum}')
-tot_mem_gb=$(pbsnodes -x | sed 's/<Node>/\n/g' | grep -o '<status>.*</status>' | grep -o 'totmem=.*' | cut -d',' -f1 | cut -d'=' -f2 | sed 's/kb//g' | awk '{sum += $1} END {print sum / (1024*1024)}')
+
+tot_mem_gb=$(pbsnodes -x | sed 's/<Node>/\n/g' | grep -o '<status>.*</status>' | grep -o 'totmem=.*' | cut -d',' -f1 | cut -d'=' -f2 | sed 's/kb//g' | tr '\n' ' ' | awk '{sum += $1} END {print sum / (1024*1024)}')
+
 mem_per_proc=$(echo "$tot_mem_gb $n_p" | awk '{print $1 / $2}')
 echo "Average memory per processor: $mem_per_proc"
 

@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=00:02:00
+#PBS -N integral_array
+#PBS -t 1-300
+
+cd $PBS_O_WORKDIR
+
+input_file="solv.inp"
+output_dir="result"
+
+# Check if output directory exists and create it if necessary
+if [ ! -d "$output_dir" ]; then
+    mkdir "$output_dir"
+fi
+
+# Get input values for current task from input file
+line=$(sed -n "${PBS_ARRAYID}p" "$input_file")
+xmin=$(echo "$line" | awk '{print $1}')
+xmax=$(echo "$line" | awk '{print $2}')
+
+# Generate output file name for current task
+output_file="${output_dir}/solvOut_${PBS_ARRAYID}.out"
+
+# Call integral function and write result to output file
+./a.out $xmin $xmax >"$output_file"

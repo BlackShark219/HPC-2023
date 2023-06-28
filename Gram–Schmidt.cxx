@@ -4,7 +4,7 @@
 #include <cmath>
 #include <omp.h>
 
-#define M_SIZE 1000
+#define M_SIZE 2000
 
 // Друк матриці
 void printMatrix(double** matrix, int size) {

@@ -4,7 +4,7 @@
 #include <cmath>
 #include <omp.h>
 
-#define M_SIZE 3
+#define M_SIZE 4
 
 // Друк матриці
 void printMatrix(double** matrix, int size) {
@@ -61,11 +61,9 @@ int main() {
     std::cout << "Initialized matrix: " << std::endl;
     printMatrix(matrix, M_SIZE);
 
-    std::cout << "Start of algorithm execution." << std::endl;
     double startTime = omp_get_wtime();
     gramSchmidt(matrix, M_SIZE);
     double endTime = omp_get_wtime();
-    std::cout << "End of algorithm execution." << std::endl;
     std::cout << "Execution time: " << endTime - startTime << " seconds." << std::endl;
 
     std::cout << "Result matrix: " << std::endl;

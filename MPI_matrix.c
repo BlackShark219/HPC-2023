@@ -3,54 +3,54 @@
 #include <mpi.h>
 
 int main(int argc, char** argv) {
-    int rank, size;
+    int processRank, numProcesses;
     MPI_Init(&argc, &argv);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
+    MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
 
-    int m = 8; // number of rows
-    int n = 12; // number of columns
-    int r = 3;  // number of rows per process
+    int numRows = 8; // number of rows
+    int numCols = 12; // number of columns
+    int rowsPerProcess = 3;  // number of rows per process
 
     // matrix initialization
-    double* matrix = malloc(sizeof(double) * m * n);
+    double* matrix = malloc(sizeof(double) * numRows * numCols);
     int i;
-    for (i = 0; i < m * n; i++) {
-        matrix[i] = (double) (i + 1);
+    for (i = 0; i < numRows * numCols; i++) {
+        matrix[i] = (double) rand() / RAND_MAX;
     }
 
     // divide matrix per process
-    int count = r * n;
-    double* local_matrix = malloc(sizeof(double) * count);
-    MPI_Scatter(matrix, count, MPI_DOUBLE, local_matrix, count, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    int count = rowsPerProcess * numCols;
+    double* localMatrix = malloc(sizeof(double) * count);
+    MPI_Scatter(matrix, count, MPI_DOUBLE, localMatrix, count, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-    // search min element per part
-    double local_min = local_matrix[0];
-    for (i = 0; i < r * n; i++) {
-        if (local_matrix[i] < local_min) {
-            local_min = local_matrix[i];
+    // search max element per part
+    double localMax = localMatrix[0];
+    for (i = 0; i < rowsPerProcess * numCols; i++) {
+        if (localMatrix[i] > localMax) {
+            localMax = localMatrix[i];
         }
     }
 
-    // min element global
-    double global_min;
-    MPI_Reduce(&local_min, &global_min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD);
+    // max element global
+    double globalMax;
+    MPI_Reduce(&localMax, &globalMax, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
-    if (rank == 0) {
+    if (processRank == 0) {
         // print generated matrix
         printf("Initialized matrix: \n");
-        for (i = 0; i < m * n; i++) {
-            printf("%.2f ", matrix[i]);
-            if ((i + 1) % n == 0) {
+        for (i = 0; i < numRows * numCols; i++) {
+            printf("%f ", matrix[i]);
+            if ((i + 1) % numCols == 0) {
                 printf("\n");
             }
         }
-        // print global min element
-        printf("Minimum element: %.2f\n", global_min);
+        // print global max element
+        printf("Maximum element: %f\n", globalMax);
     }
 
     free(matrix);
-    free(local_matrix);
+    free(localMatrix);
     MPI_Finalize();
     return 0;
 }

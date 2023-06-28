@@ -63,9 +63,10 @@ int main() {
     double** matrix = new double*[M_SIZE];
     initializeMatrix(matrix, M_SIZE);
 
-    std::cout << "Initialized matrix: " << std::endl;
-    printMatrix(matrix, M_SIZE);
+    //std::cout << "Initialized matrix: " << std::endl;
+    //printMatrix(matrix, M_SIZE);
 
+    std::cout << "Threads count:" << omp_get_max_threads() << "." << std::endl;
     double startTime = omp_get_wtime();
     gramSchmidt(matrix, M_SIZE);
     double endTime = omp_get_wtime();

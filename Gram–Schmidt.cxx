@@ -22,10 +22,15 @@ void initializeMatrix(double** matrix, int size) {
     for (int i = 0; i < size; i++) {
         matrix[i] = new double[size];
         for (int j = 0; j < size; j++) {
-            matrix[i][j] = rand() % 100 + 1;
+            if (i == j) {
+                matrix[i][j] = rand() % 100 + 101; // Діагональні елементи від 101 до 200
+            } else {
+                matrix[i][j] = rand() % 100 + 1; // Недіагональні елементи від 1 до 100
+            }
         }
     }
 }
+
 
 void gramSchmidt(double** matrix, int size) {
     #pragma omp parallel for

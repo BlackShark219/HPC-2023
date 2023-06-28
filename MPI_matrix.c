@@ -8,9 +8,9 @@ int main(int argc, char** argv) {
     MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
     MPI_Comm_size(MPI_COMM_WORLD, &numProcesses);
 
-    int numRows = 10; // кількість рядків
-    int numCols = 20; // кількість стовпців
-    int rowsPerProcess = 2;  // кількість рядків на процес
+    int numRows = 8; // кількість рядків
+    int numCols = 15; // кількість стовпців
+    int rowsPerProcess = 3;  // кількість рядків на процес
 
     // ініціалізація матриці
     double* matrix = malloc(sizeof(double) * numRows * numCols);

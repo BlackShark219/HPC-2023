@@ -72,8 +72,8 @@ int main() {
     double endTime = omp_get_wtime();
     std::cout << "Execution time: " << endTime - startTime << " seconds." << std::endl;
 
-    std::cout << "Result matrix: " << std::endl;
-    printMatrix(matrix, M_SIZE);
+    //std::cout << "Result matrix: " << std::endl;
+    //printMatrix(matrix, M_SIZE);
 
     for (int i = 0; i < M_SIZE; i++) {
         delete[] matrix[i];
